@@ -197,10 +197,10 @@ def validate_settings(settings):
     except ValueError:
         exit("Error:  Pixels must be an integer")
 
-    validate_led_config(ALIVE_COLOR_KEY, settings["colors"])
-    validate_led_config(DEAD_COLOR_KEY, settings["colors"])
-    validate_led_config(UPDATING_COLOR_KEY, settings["colors"])
-    validate_led_config(EMPTY_COLOR_KEY, settings["colors"])
+    validate_led_config(ALIVE_COLOR_KEY, settings["colors"][ALIVE_COLOR_KEY])
+    validate_led_config(DEAD_COLOR_KEY, settings["colors"][DEAD_COLOR_KEY])
+    validate_led_config(UPDATING_COLOR_KEY, settings["colors"][UPDATING_COLOR_KEY])
+    validate_led_config(EMPTY_COLOR_KEY, settings["colors"][EMPTY_COLOR_KEY])
 
 def main():
     settings = process_args()
