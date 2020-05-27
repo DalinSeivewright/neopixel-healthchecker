@@ -3,10 +3,11 @@ Neopixel Healthchecker
 
 A python script that will take a list of servers (hostname or ip), will ping through the list (asyncronously, specifically for the reason under gotchas), and then update a pixel colors on a neopixel-like display in the order that the servers were specified.
 Each pixel can have one of 4 states:
+
 * Alive:  The ping against the server succeeded.
 * Dead:  The ping against the server failed.
 * Updating:  The server to be pinged is new to the list and has not been pinged yet, or is in an animation transition stage.
-* Empty:  The number of pixels exceeds the number of servers to be pinged.
+*  Empty:  The number of pixels exceeds the number of servers to be pinged.
 
 After the servers are pinged, the statuses are saved to a cache file.  This is because the neopixel library used blanks out the pixels of the display when the display is initialized.  The cache file will load the last ping result of each server to refresh the display.
 When the display is refreshed with the new statuses, the script exits.  This is on purpose.  If you need to run this script periodically, I recommend running through a cron job or other scheduler.
