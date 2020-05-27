@@ -125,8 +125,6 @@ def process_args():
             settings["servers"] = config_data["servers"]
         if "colors" in config_data:
             settings["colors"] = config_data["colors"]
-        else:
-            settings["colors"] = {}
         if "file" in config_data:
             settings["status_file"] = config_data["file"]
         if "timeout" in config_data:
@@ -168,6 +166,8 @@ def load_color_from_string(color_key, json_string):
     return component_config
 
 def default_settings(settings):
+    if "colors" not in settings:
+        settings["colors"] = {}
     if "timeout" not in settings:
         settings["timeout"] = "1"
     if ALIVE_COLOR_KEY not in settings["colors"]:
@@ -187,24 +187,20 @@ def validate_settings(settings):
     if "pixels" not in settings:
         exit("Error:  Pixel count must be specified!")
 
-    if "timeout" in settings:
-        try:
-            int(settings["timeout"])
-        except ValueError:
-            exit("Error:  Timeout must be an integer")
-    if "pixels" in settings:
-        try:
-            int(settings["pixels"])
-        except ValueError:
-            exit("Error:  Pixels must be an integer")
-    if ALIVE_COLOR_KEY in settings:
-        validate_led_config(ALIVE_COLOR_KEY, settings["colors"])
-    if DEAD_COLOR_KEY in settings:
-        validate_led_config(DEAD_COLOR_KEY, settings["colors"])
-    if UPDATING_COLOR_KEY in settings:
-        validate_led_config(UPDATING_COLOR_KEY, settings["colors"])
-    if EMPTY_COLOR_KEY in settings:
-        validate_led_config(EMPTY_COLOR_KEY, settings["colors"])
+    try:
+        int(settings["timeout"])
+    except ValueError:
+        exit("Error:  Timeout must be an integer")
+
+    try:
+        int(settings["pixels"])
+    except ValueError:
+        exit("Error:  Pixels must be an integer")
+
+    validate_led_config(ALIVE_COLOR_KEY, settings["colors"])
+    validate_led_config(DEAD_COLOR_KEY, settings["colors"])
+    validate_led_config(UPDATING_COLOR_KEY, settings["colors"])
+    validate_led_config(EMPTY_COLOR_KEY, settings["colors"])
 
 def main():
     settings = process_args()
