@@ -25,21 +25,22 @@ def load_statuses(status_file_path):
         print("Warning:  Could not open status file to load existing server status flags.")
         return {}
 
-def update_leds(pixels, pixel_count, hosts, status_data, updating_animation, colors):
-    for i in range(pixel_count):
-        if i >= len(hosts):
-            pixels[i] = (colors[EMPTY_COLOR_KEY]["r"], colors[EMPTY_COLOR_KEY]["g"], colors[EMPTY_COLOR_KEY]["b"])
-            continue
-        if hosts[i] not in status_data:
-            pixels[i] = (colors[UPDATING_COLOR_KEY]["r"], colors[UPDATING_COLOR_KEY]["g"], colors[UPDATING_COLOR_KEY]["b"])
-            continue
-        if updating_animation:
-            pixels[i] = (colors[UPDATING_COLOR_KEY]["r"], colors[UPDATING_COLOR_KEY]["g"], colors[UPDATING_COLOR_KEY]["b"])
-            time.sleep(0.5)
-        if status_data[hosts[i]] == 0:
-            pixels[i] = (colors[ALIVE_COLOR_KEY]["r"], colors[ALIVE_COLOR_KEY]["g"], colors[ALIVE_COLOR_KEY]["b"])
-        else:
-            pixels[i] = (colors[DEAD_COLOR_KEY]["r"], colors[DEAD_COLOR_KEY]["g"], colors[DEAD_COLOR_KEY]["b"])
+def update_leds(pixel_count, hosts, status_data, updating_animation, colors):
+    with neopixel.NeoPixel(board.D18, pixel_count) as pixels:
+        for i in range(pixel_count):
+            if i >= len(hosts):
+                pixels[i] = (colors[EMPTY_COLOR_KEY]["r"], colors[EMPTY_COLOR_KEY]["g"], colors[EMPTY_COLOR_KEY]["b"])
+                continue
+            if hosts[i] not in status_data:
+                pixels[i] = (colors[UPDATING_COLOR_KEY]["r"], colors[UPDATING_COLOR_KEY]["g"], colors[UPDATING_COLOR_KEY]["b"])
+                continue
+            if updating_animation:
+                pixels[i] = (colors[UPDATING_COLOR_KEY]["r"], colors[UPDATING_COLOR_KEY]["g"], colors[UPDATING_COLOR_KEY]["b"])
+                time.sleep(0.5)
+            if status_data[hosts[i]] == 0:
+                pixels[i] = (colors[ALIVE_COLOR_KEY]["r"], colors[ALIVE_COLOR_KEY]["g"], colors[ALIVE_COLOR_KEY]["b"])
+            else:
+                pixels[i] = (colors[DEAD_COLOR_KEY]["r"], colors[DEAD_COLOR_KEY]["g"], colors[DEAD_COLOR_KEY]["b"])
 
 def save_statuses(status_file_path, status_data):
     with open(status_file_path, "w") as status_file:
@@ -91,8 +92,8 @@ def load_config_file(path):
       exit("Error:  Could not open config file " + path)
 
 def clear_pixels(pixel_count):
-    pixels = neopixel.NeoPixel(board.D18, pixel_count)
-    pixels.fill((0,0,0))
+    with neopixel.NeoPixel(board.D18, pixel_count) as pixels:
+        pixels.fill((0,0,0))
 
 def process_args():
     settings = {}
@@ -209,11 +210,10 @@ def main():
     timeout = settings["timeout"]
     pixel_count = int(settings["pixels"])
     status_data = load_statuses(status_file_path)
-    pixels = neopixel.NeoPixel(board.D18, pixel_count)
-    update_leds(pixels, pixel_count, servers, status_data, False, settings["colors"])
+    update_leds(pixel_count, servers, status_data, False, settings["colors"])
     updated_status_data = ping_hosts(servers, timeout)
     save_statuses(status_file_path, updated_status_data)
-    update_leds(pixels, pixel_count, servers, updated_status_data, True, settings["colors"])
+    update_leds(pixel_count, servers, updated_status_data, True, settings["colors"])
 
 if __name__ == "__main__":
     main()
