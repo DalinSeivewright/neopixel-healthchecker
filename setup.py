@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='NeoPixel-Healthchecker',
-    version='1.0.0',
+    version='1.0.1',
     scripts=['bin/neopixel-healthchecker.py'],
     license='LICENSE',
     description='Ping servers and display the result on a neopixel-like display',
